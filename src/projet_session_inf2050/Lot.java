@@ -138,13 +138,13 @@ public class Lot {
     
     public void setNbServices(int s){
         if(s >= 0){
-            this.nbDroitsPassages = s;
+            this.nbServices = s;
         }
     }
     
     public void setSuperfice(int s){
         if(s >= 0){
-            this.nbDroitsPassages = s;
+            this.superficie = s;
         }
     }
     

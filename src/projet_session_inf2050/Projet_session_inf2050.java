@@ -31,8 +31,18 @@ public class Projet_session_inf2050 {
         String min;
         String max;
         double valeurTotal = 733.77;
+        String entree = "";
+        String sortie = "";
         
-        String myJSON = FileReaders.loadFileIntoString("test.json","UTF-8");
+        if(args.length == 2){
+            entree = args[0];
+            sortie = args[1];
+        } else {
+            System.out.println("nombres arguments invalide");
+            System.exit(1);
+        }
+        
+        String myJSON = FileReaders.loadFileIntoString(entree,"UTF-8");
         
         //charge les variables du terrain
         JSONObject terrain = JSONObject.fromObject( myJSON );
@@ -46,7 +56,6 @@ public class Projet_session_inf2050 {
         
         //charge les lots du terrain dans une liste de lots
         Lot[] listeLots = new Lot[lotissements.size()];
-        
         for (int i = 0; i < lotissements.size(); i++){
             JSONObject JSONCourant = lotissements.getJSONObject(i);
             Lot lotCourant = new Lot();
@@ -59,13 +68,43 @@ public class Projet_session_inf2050 {
             listeLots[i] = lotCourant;
         }
         
+        
+        terrain.clear();
+        lotissements.clear();
+        
+        
         //calcule la valeur de chaque lot
         for(int i = 0; i < listeLots.length; i++){
+            JSONObject JSONCourant = new JSONObject();
+            double valeurCourante;
+            
             Lot lotCourant = listeLots[i];
-            valeurTotal += lotCourant.valeurLot(type, prixMin, prixMax);
+            valeurCourante = lotCourant.valeurLot(type, prixMin, prixMax); 
+            valeurTotal += valeurCourante;
+            
+            JSONCourant.accumulate("description", lotCourant.getDescription());
+            JSONCourant.accumulate("valeur_par_lot", valeurCourante);
+            lotissements.add(JSONCourant);
+        }
+        //arrondit la valeur 
+        if(valeurTotal*10%0.5!=0.00){
+            valeurTotal += (0.5-valeurTotal*10%0.5)/10;
+        }
+        double TXScolaire = valeurTotal*0.012;
+        double TXMunicipale = valeurTotal*0.025;
+        if(TXScolaire*10%0.5!=0.00){
+            TXScolaire += (0.5-TXScolaire*10%0.5)/10;
+        }
+        if(TXMunicipale*10%0.5!=0.00){
+            TXMunicipale += (0.5-TXMunicipale*10%0.5)/10;
         }
         
+        terrain.accumulate("valeur_fonciere_totale", valeurTotal);
+        terrain.accumulate("taxe_scolaire", TXScolaire);
+        terrain.accumulate("taxe_ municipale", TXMunicipale);
+        terrain.accumulate("lotissements", lotissements);
         
+        FileWriters.saveStringIntoFile(sortie , terrain.toString());
         
         //System.out.println("valeur total : " + valeurTotal);
     }
