@@ -1,5 +1,8 @@
 package projet_session_inf2050;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -21,7 +24,12 @@ public class Lot {
     }
     
     
-    
+    /**
+    * calcule la valeur du lot
+    * @param type type du terrain
+    * 
+    * @return la valeur du lot
+    */
     public double valeurLot(int type, double prixMin, double prixMax){
         double resultat = 0;
         
@@ -32,14 +40,6 @@ public class Lot {
         return resultat;
     }
     
-    /**
-    *   calcule le montant de la valeur de la superficie du lot
-    * 
-    * @param type       type du terrain
-    * @param prixMin    prix minimum du terrain
-    * @param prixMax    prix maximum du terrain
-    * @return           valeur de la superficie
-    */
     private double montantSuperficie(int type, double prixMin, double prixMax){
         double montant;
         double prixM2 = 0;
@@ -60,39 +60,27 @@ public class Lot {
         return montant;
     }
     
-    /**
-    *   calcule le montant pour les droits de passage du lot
-    * 
-    * @param type       type du terrain
-    * @param valeurLot  valeur du lot
-    * @return           montant des droits de passage
-    */
     private double montantDroitsPassage(int type, double valeurLot){
         double montant;
         double facteur = 0;
         
         switch(type){
             case 0:
-                facteur = 5/100;
+                facteur = (double)5/100;
                 break;
             case 1:
-                facteur = 10/100;
+                facteur = (double)10/100;
                 break;
             case 2:
-                facteur = 15/100;
+                facteur = (double)15/100;
                 break;
         }
         montant = 500 - (this.getNbDroitsPassages() * facteur * valeurLot);
         
+        
         return montant;
     }
     
-    /**
-    *   calcule le montant pour les services du lot
-    * 
-    * @param type       type du terrain
-    * @return           montant des services
-    */
     private double montantServices(int type){
         double montant = 0;
         
@@ -123,36 +111,70 @@ public class Lot {
         return montant;
     }
     
+    public static void verifierDescription(Lot[] liste) throws InvalideException{
+        for(int i = 0; i < liste.length; i++){
+            if(liste[i].getDescription().isEmpty()){
+                throw new InvalideException("la description d'un lot en vide");
+            }
+            for(int j = i+1; j < liste.length; j++){
+                if(liste[i].getDescription().equals(liste[j].getDescription())){
+                    throw new InvalideException("Deux lots ne peuvent pas avoir la même descripton");
+                }
+            }
+        }
+    }
     
-    //***simple setters***
+    //***setters***
     
     public void setDescription(String d){
         this.description = d;
     }
     
-    public void setNbDroitsPassages(int p){
-        if(p >= 0){
+    public void setNbDroitsPassages(int p) throws InvalideException{
+        if(p < 0){
+            throw new InvalideException("le nombre de droit de passage du " + this.getDescription() + " est inférieure à 0");
+        } else if(p > 10){
+            throw new InvalideException("le nombre de droit de passage du " + this.getDescription() + " est supérieur à 10");
+        }
+        else{
             this.nbDroitsPassages = p;
         }
     }
     
-    public void setNbServices(int s){
-        if(s >= 0){
+    public void setNbServices(int s) throws InvalideException{
+        if(s < 0){
+            throw new InvalideException("le nombre de service du " + this.getDescription() + " est inférieure à 0");    
+        } else if(s > 5){
+            throw new InvalideException("le nombre de service du " + this.getDescription() + " est supérieure à 5");
+        } else {
             this.nbServices = s;
         }
     }
     
-    public void setSuperfice(int s){
-        if(s >= 0){
+    public void setSuperfice(int s) throws InvalideException{
+        if(s < 0){
+            throw new InvalideException("la superficie du " + this.getDescription() + " est inférieure à 0");    
+        } else if(s > 50000){
+            throw new InvalideException("la superficie du " + this.getDescription() + " est supérieure à 50 000");    
+        } else{
             this.superficie = s;
         }
     }
     
-    public void setDate(String d){
-        this.date = d;
+    public void setDate(String d) throws InvalideException{
+        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd"); 
+        formatDate.setLenient(false);
+        try{
+            formatDate.parse(d);
+            this.date = d;
+        }catch(ParseException e){
+            throw new InvalideException("Le format de la date du " + this.getDescription()
+                    + " ne respecte pas les normes ISO 8601" );
+        }
+        
     }
     
-    //***simple getters***
+    //***getters***
     
     public String getDescription(){
         return this.description;
