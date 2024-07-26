@@ -20,7 +20,7 @@ public class FichierSortie {
         try{
             FileWriters.saveStringIntoFile(sortie , "");
         } catch(IOException e) {
-            System.out.println("impossible de créer le fichier");
+            System.out.println("impossible de créer le fichier de sortie");
         }
     }
     

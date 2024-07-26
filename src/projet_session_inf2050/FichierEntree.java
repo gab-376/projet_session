@@ -27,7 +27,7 @@ public class FichierEntree {
     
     /**
     * récupère le fichier et les infos du terrain au format JSON 
-    * @param entree String représentant lot'emplacement du fichier
+    * @param entree String représentant l'emplacement du fichier
     *
     * @throws InvalideException si une information est manquante ou erroné
     */

@@ -78,7 +78,7 @@ public class Traiter {
     }
     
     /**
-     * Arrondit un montant au 5 sous supérieur
+     * Arrondit un montant au 5 sous le plus près
      * 
      * @param nombre le montant à arrondir
      * 
